@@ -65,7 +65,7 @@ export default function Task() {
   };
   const handleJoinTelegramGroupCheck = async () => {
     try {
-      fetch("https://relaxing-dane-lively.ngrok-free.app/joinTG", {
+      fetch("https://109.237.99.151:3000/joinTG", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -99,7 +99,7 @@ export default function Task() {
   };
   const handleSubscribeTelegramChannelCheck = async () => {
     try {
-      fetch("https://relaxing-dane-lively.ngrok-free.app/joinTC", {
+      fetch("https://109.237.99.151:3000/joinTC", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
