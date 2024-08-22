@@ -2,7 +2,7 @@ import { RequestHandler } from 'express';
 import { createProxyMiddleware } from 'http-proxy-middleware';
 
 const proxy: RequestHandler = createProxyMiddleware({
-  target: 'https://109.237.99.151:3000/',
+  target: 'https://total.miketoken.me/',
   changeOrigin: true,
 });
 
