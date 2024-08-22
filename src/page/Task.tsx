@@ -65,7 +65,7 @@ export default function Task() {
   };
   const handleJoinTelegramGroupCheck = async () => {
     try {
-      fetch("https://109.237.99.151:3000/joinTG", {
+      fetch("https://total.miketoken.me/joinTG", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -75,6 +75,7 @@ export default function Task() {
       }).then(async () => {
         await axios.post(`/earnings/${username}`).then((res) => {
           if (res.data.joinTelegram.status) {
+            // console.log("sdfsdfs", res.data.joinTelegram.earned);
             if (!res.data.joinTelegram.earned) {
               dispatch(updateBalance(username, balance + 1000)).then(() => {
                 axios.post(`/earnings/update/joinTelegram/${username}`, {
@@ -99,7 +100,7 @@ export default function Task() {
   };
   const handleSubscribeTelegramChannelCheck = async () => {
     try {
-      fetch("https://109.237.99.151:3000/joinTC", {
+      fetch("https://total.miketoken.me/joinTC", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
