@@ -27,7 +27,6 @@ const wallet = createSlice({
     hasError(state, action) {
       state.error = action.payload;
     },
-
     // GET USER
     getWalletSuccess(state, action) {
       state.user = action.payload;
@@ -149,6 +148,7 @@ export function updateBalance(username: string, balance: number) {
         balance: balance,
       });
       dispatch(wallet.actions.updateWalletSuccess(response.data));
+      console.log("redux---------->", response.data)
     } catch (error) {
       dispatch(wallet.actions.hasError(error));
     }

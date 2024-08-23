@@ -4,6 +4,7 @@ import { ToastContainer } from "react-toastify";
 import Footer from "../component/Footer";
 import "react-toastify/dist/ReactToastify.css";
 import ProgressBar from "../component/ProgressBar";
+import { Oval } from "react-loader-spinner";
 import { dispatch, useSelector } from "../store";
 import axios from "../utils/api";
 import "../css/font.css";
@@ -16,36 +17,50 @@ import {
 } from "../store/reducers/wallet";
 
 function Home() {
-  const usernameState = useSelector((state) => state.wallet.user?.username);
-  const tokenState = useSelector((state) => state.wallet.user?.balance);
-  const energyState = useSelector((state) => state.wallet.user?.energy);
-  const tapState = useSelector((state) => state.wallet.user?.tap);
-  const limitState = useSelector((state) => state.wallet.user?.limit);
+  const userState = useSelector((state) => state.wallet?.user);
   const [imgStatus, setImgStatus] = useState(false);
-  const [tap, setTap] = useState<number>(tapState);
-  const [username, setUsername] = useState<string>(usernameState);
-  const [token, setToken] = useState<number>(tokenState);
-  const [remainedEnergy, setRemainedEnergy] = useState<number>(energyState);
-  const [limit, setLimit] = useState<number>(limitState);
+  const [tap, setTap] = useState<number>(0);
+  const [username, setUsername] = useState<string>("");
+  const [token, setToken] = useState<number>(0);
+  const [remainedEnergy, setRemainedEnergy] = useState<number>(0);
+  const [limit, setLimit] = useState<number>(0);
+  const [loadingStatus, setLoadingStatus] = useState<boolean>(false);
   useEffect(() => {
     const webapp = (window as any).Telegram?.WebApp.initDataUnsafe;
-    // console.log("=========>webapp", webapp);
     if (webapp) {
       setUsername(webapp["user"]["username"]);
       axios.post(`/vibe/add,`, { username: webapp["user"]["username"] });
       axios.post(`/earnings/add`, { username: webapp["user"]["username"] });
       dispatch(insertWallet(webapp["user"]["username"]));
-      dispatch(getWallet(webapp["user"]["username"])).then(() => {
-        setTap(tapState);
-        setToken(tokenState);
-        setRemainedEnergy(energyState);
-      });
+      dispatch(getWallet(webapp["user"]["username"]))
     }
   }, []);
   console.log("---Telegram info----->", username);
   useEffect(() => {
-    setLimit(limitState);
-  }, [limitState]);
+    setLimit(userState.limit);
+  }, [userState.limit]);
+  useEffect(() => {
+    if (token == 0) {
+      setLoadingStatus(true)
+    } else {
+      setLoadingStatus(false)
+    }
+  }, [token]);
+  useEffect(() => {
+    if (userState.balance == undefined) {
+      setToken(userState.balance);
+    }
+  }, [userState])
+  const [hasRunEffect, setHasRunEffect] = useState<boolean>(false)
+  useEffect(() => {
+    if (userState.tap != 0 && !hasRunEffect) {
+      setTap(userState.tap);
+      setToken(userState.balance);
+      setRemainedEnergy(userState.energy);
+      setLimit(userState.limit);
+      setHasRunEffect(true);
+    }
+  }, [userState, hasRunEffect])
   useEffect(() => {
     dispatch(insertWallet(username));
   }, [username]);
@@ -56,28 +71,28 @@ function Home() {
   const [score, setScore] = useState<string>(`+${tap}`);
   const handleTouch = (event: React.TouchEvent<HTMLDivElement>) => {
     event.preventDefault();
-    
+
     // Get the first touch point
     const touch = event.touches[0];
-    
+
     // Get the bounding rectangle of the current target
     const rect = event.currentTarget.getBoundingClientRect();
-    
+
     // Calculate the position of the touch relative to the element
     const x = touch.clientX - rect.left;
     const y = touch.clientY - rect.top;
-  
+
     // Create a style element for the animation
     const styleElement = document.createElement("style");
     document.head.appendChild(styleElement);
-  
+
     // Insert keyframes for the fade-out animation
     styleElement.sheet &&
       styleElement.sheet.insertRule(
         "@keyframes fade-out-top-right {0% {opacity: 1; transform: translateY(0); } 100% {opacity: 0; transform: translateY(-100%);}}",
         0
       );
-  
+
     // Create a new div for the coin display
     const newDiv = document.createElement("div");
     newDiv.textContent = `${score}`;
@@ -99,13 +114,13 @@ function Home() {
     newDiv.style.zIndex = "10";
     newDiv.className =
       "dynamic-div animate-fadeouttopright transform max-sm:text-3xl text-5xl font-bold transition not-selectable";
-  
+
     // Append the new div to the body or a specific ref
     bodyRef.current && bodyRef.current.appendChild(newDiv);
-    
+
     // Set a timeout to remove the div after 1 second
     const interval = setTimeout(() => newDiv.remove(), 1000);
-  
+
     // Cleanup function to clear the timeout
     return () => clearTimeout(interval);
   };
@@ -119,9 +134,6 @@ function Home() {
     return () => clearInterval(interval);
   }, [username, remainedEnergy, limit]);
 
-  // const handleTap = (event: React.MouseEvent<HTMLDivElement>) => {
-
-  // };
   const [isTouching, setIsTouching] = useState(false);
 
   const handleTouchStart = (event: React.TouchEvent<HTMLDivElement>) => {
@@ -203,7 +215,14 @@ function Home() {
               className=" text-2xl text-white"
               style={{ fontFamily: " spicy" }}
             >
-              {formatNumberWithCommas(token)}
+              <Oval visible={loadingStatus}
+                height="40"
+                width="40"
+                color="#ffffff"
+                ariaLabel="oval-loading"
+                wrapperStyle={{}}
+              ></Oval> {!loadingStatus && formatNumberWithCommas(token)}
+              {/* {formatNumberWithCommas(token)} */}
             </h1>
           </div>
         </div>

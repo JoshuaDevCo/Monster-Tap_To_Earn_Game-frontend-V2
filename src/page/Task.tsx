@@ -6,6 +6,7 @@ import { ToastContainer, toast } from "react-toastify";
 import Modal from "../component/modal";
 import moment from "moment";
 import Footer from "../component/Footer";
+
 export default function Task() {
   const [colorTag, setColorTag] = useState<boolean>(false);
   const username_state = useSelector((state) => state.wallet.user?.username);
@@ -51,6 +52,7 @@ export default function Task() {
   const telegramGroupLink = "https://t.me/MikeToken";
   const telegramChannelLink = "https://t.me/MikeTokenAnn";
   const twitterChannelLink = "https://twitter.com/MikeTokenio";
+  
   const handleLetsGoTelegramGroup = () => {
     window.open(telegramGroupLink, "_blank");
   };
@@ -60,8 +62,12 @@ export default function Task() {
   const handleJoinTelegramChannel = () => {
     window.open(telegramChannelLink, "_blank");
   };
-  const handleTwitterChannel = () => {
+  const handleTwitterChannel = async () => {
     window.open(twitterChannelLink, "_blank");
+    await axios.post(`/earnings/twitterstatus/${username}`, {
+      status: true,
+      earned: false,
+    });
   };
   const handleJoinTelegramGroupCheck = async () => {
     try {
@@ -134,6 +140,7 @@ export default function Task() {
   };
   const handleTwitterChannelCheck = async () => {
     await axios.post(`/earnings/${username}`).then((res) => {
+      if (res.data.followTwitter.status) {
       if (!res.data.followTwitter.earned) {
         dispatch(updateBalance(username, balance + 1000)).then(() => {
           axios.post(`/earnings/update/followTwitter/${username}`, {
@@ -144,6 +151,11 @@ export default function Task() {
         });
       } else {
         toast.warning("You have already received bonus!");
+      }
+    } else {
+        toast.warning(
+          "You didn't visit Twitter yet! Please visit first!"
+        );
       }
     });
   };
@@ -195,7 +207,7 @@ export default function Task() {
       });
     } catch (err) {
       console.log(err);
-      toast.warning(" Please join Telegram Channel");
+      toast.warning("Please visit Telegram Channel and post a vibe for today!");
     }
   };
   return (
