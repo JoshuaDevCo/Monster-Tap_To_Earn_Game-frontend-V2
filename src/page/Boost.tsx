@@ -6,11 +6,14 @@ import {
   updateFullEnergy,
   updateLimit,
   updateTap,
+  updateDate,
   getWallet,
 } from "../store/reducers/wallet";
 import { useEffect, useState } from "react";
 import Modal from "../component/modal";
 import Footer from "../component/Footer";
+import moment from "moment";
+
 export default function Boost() {
   const tokenState = useSelector((state) => state.wallet.user?.balance);
   const username_state = useSelector((state) => state.wallet.user?.username);
@@ -19,11 +22,47 @@ export default function Boost() {
   const full_energy_state = useSelector(
     (state) => state.wallet.user?.full_energy
   );
+  const date_state = useSelector((state) => state.wallet.user?.date);
+
   const [token, setToken] = useState<number>(tokenState);
   const [username, setUsername] = useState<string>(username_state);
   const [limit, setLimit] = useState<number>(limit_state);
   const [tap, setTap] = useState<number>(tap_state);
   const [full_energy, setFullEnergy] = useState<number>(full_energy_state);
+  const [date, setDate] = useState<moment.Moment | null>(date_state ? moment(date_state) : null);
+  const [diffDays, setDiffDays] = useState<number>(0);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      calculateDifference(moment());
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, []);
+  
+  console.log(`${date} 🅰`);
+  const calculateDifference = (currentDateTime: moment.Moment) => {
+    if (date) {
+      const dateDiff = date
+        ? currentDateTime.diff(date, "seconds")
+        : 0;
+      setDiffDays(Math.floor(dateDiff / (60 * 60 * 24)));
+    }
+  };
+
+  console.log(
+    `${moment()} ${diffDays}d 🐱‍🏍`
+  );
+  
+  useEffect(() => {
+    if(diffDays > 0 ) {
+      setFullEnergy(1);
+      dispatch(updateDate(username, moment())).then(() => {
+        dispatch(updateFullEnergy(username, 1));
+      });
+    }
+  }, [diffDays]);
+  
   useEffect(() => {
     dispatch(getWallet(username));
   }, [username]);
@@ -33,7 +72,8 @@ export default function Boost() {
     setLimit(limit_state);
     setTap(tap_state);
     setFullEnergy(full_energy_state);
-  }, [tokenState, username_state, limit_state, tap_state, full_energy_state]);
+    setDate(date_state ? moment(date_state) : null);
+  }, [tokenState, username_state, limit_state, tap_state, date_state, full_energy_state]);
   const handleFullEnergy = () => {
     console.log("-----full energy💰🏆💪------>", limit_state);
     if (full_energy + 1 > 6) {
@@ -98,6 +138,7 @@ export default function Boost() {
   const handleCloseLimitModal = () => {
     setIsLimitModalOpen(false);
   };
+  
   return (
     <>
       <ToastContainer />

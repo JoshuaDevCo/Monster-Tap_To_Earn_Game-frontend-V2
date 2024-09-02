@@ -12,12 +12,12 @@ import "../css/spread.css";
 import {
   insertWallet,
   updateWallet,
-  updateEnergy,
+  // updateEnergy,
   getWallet,
 } from "../store/reducers/wallet";
 
 function Home() {
-  const userState = useSelector((state) => state.wallet?.user);
+  const userState = useSelector((state) => state.wallet.user);
   const [imgStatus, setImgStatus] = useState(false);
   const [tap, setTap] = useState<number>(0);
   const [username, setUsername] = useState<string>("");
@@ -35,7 +35,7 @@ function Home() {
       dispatch(getWallet(webapp["user"]["username"]))
     }
   }, []);
-  console.log("---Telegram info----->", username);
+  console.log("---Telegram information----->", username);
   useEffect(() => {
     setLimit(userState.limit);
   }, [userState.limit]);
@@ -48,16 +48,16 @@ function Home() {
   }, [token]);
   useEffect(() => {
     if (userState.balance == undefined) {
-      setToken(userState.balance);
+      setToken(100);
     }
   }, [userState])
   const [hasRunEffect, setHasRunEffect] = useState<boolean>(false)
   useEffect(() => {
     if (userState.tap != 0 && !hasRunEffect) {
-      setTap(userState.tap);
-      setToken(userState.balance);
-      setRemainedEnergy(userState.energy);
-      setLimit(userState.limit);
+      setTap(userState?.tap);
+      setToken(userState?.balance);
+      setRemainedEnergy(userState?.energy);
+      setLimit(userState?.limit);
       setHasRunEffect(true);
     }
   }, [userState, hasRunEffect])
@@ -67,6 +67,7 @@ function Home() {
   function formatNumberWithCommas(number: number, locale = "en-US") {
     return new Intl.NumberFormat(locale).format(number);
   }
+
   const bodyRef = useRef<HTMLDivElement | null>(null);
   const [score, setScore] = useState<string>(`+${tap}`);
   const handleTouch = (event: React.TouchEvent<HTMLDivElement>) => {
@@ -124,13 +125,15 @@ function Home() {
     // Cleanup function to clear the timeout
     return () => clearTimeout(interval);
   };
+
   useEffect(() => {
     const interval = setInterval(() => {
       console.log("-information---->", username, remainedEnergy);
       if (remainedEnergy < limit) {
-        dispatch(updateEnergy(username, remainedEnergy + 1));
+        // dispatch(updateEnergy(username, remainedEnergy + 1));
+        setRemainedEnergy(remainedEnergy + 1);
       }
-    }, 216000);
+    }, 5000);
     return () => clearInterval(interval);
   }, [username, remainedEnergy, limit]);
 
@@ -221,7 +224,8 @@ function Home() {
                 color="#ffffff"
                 ariaLabel="oval-loading"
                 wrapperStyle={{}}
-              ></Oval> {!loadingStatus && formatNumberWithCommas(token)}
+              ></Oval> 
+              {!loadingStatus && formatNumberWithCommas(token)}
               {/* {formatNumberWithCommas(token)} */}
             </h1>
           </div>

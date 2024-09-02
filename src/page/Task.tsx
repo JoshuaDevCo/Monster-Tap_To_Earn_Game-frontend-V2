@@ -46,9 +46,8 @@ export default function Task() {
   );
   useEffect(() => {
     setUsername(username_state);
-    setBalance(balance_state);
     setDailyCoins(daily_coins_state ? moment(daily_coins_state) : null);
-  }, [username_state, balance_state, daily_coins_state, setDailyCoins]);
+  }, [username_state, balance_state, daily_coins_state, setDailyCoins, setBalance]);
   const telegramGroupLink = "https://t.me/MikeToken";
   const telegramChannelLink = "https://t.me/MikeTokenAnn";
   const twitterChannelLink = "https://twitter.com/MikeTokenio";
@@ -83,7 +82,8 @@ export default function Task() {
           if (res.data.joinTelegram.status) {
             // console.log("sdfsdfs", res.data.joinTelegram.earned);
             if (!res.data.joinTelegram.earned) {
-              dispatch(updateBalance(username, balance + 1000)).then(() => {
+              dispatch(updateBalance(username, balance + 1000)).then(async () => {
+                // setBalance(balance + 1000);
                 axios.post(`/earnings/update/joinTelegram/${username}`, {
                   status: true,
                   earned: true,

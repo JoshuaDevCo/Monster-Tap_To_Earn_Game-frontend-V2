@@ -63,7 +63,7 @@ export default function Airdrop() {
               type="text"
               value={address}
               onChange={(e) => setAddress(e.target.value)}
-              className=" bg-gradient-to-r from-[#556166] to-[#293337] p-4 border border-[white] border-solid rounded-[10px] w-full"
+              className=" bg-gradient-to-r from-[#556166] to-[#293337] p-4 border border-[white] border-solid rounded-[10px] w-full text-[white]"
             />
             <CopyToClipboard text={textToCopy} onCopy={handleCopy}>
               <img
