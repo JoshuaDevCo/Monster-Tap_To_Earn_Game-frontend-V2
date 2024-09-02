@@ -6,6 +6,7 @@ export interface walletProfile {
     full_energy: number;
     tap: number;
     limit: number;
+    date: Date;
     daily_coins: Date;
 }
 export interface walletStateProps {

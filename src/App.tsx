@@ -12,6 +12,7 @@ import { store } from "./store";
 import Boost from "./page/Boost";
 import Task from "./page/Task";
 import Airdrop from "./page/Airdrop";
+
 // import MobileQR from "./component/MobileQR";
 function App() {
   const [loading, setLoading] = useState(false);
@@ -31,7 +32,7 @@ function App() {
   }, []);
   return (
     <Router>
-      {/*!isMobile ? (
+      { /*!isMobile ? (
         <MobileQR />
       ) : */loading ? (
         <Loading />
@@ -50,6 +51,7 @@ function App() {
             </Routes>
             <ToastContainer />
           </ReduxProvider>
+    
         </div>
       )}
     </Router>
