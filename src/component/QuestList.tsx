@@ -37,7 +37,7 @@ export default function QuestList() {
           className=" text-[#33CC66] text-2xl"
           style={{ fontFamily: "poppins" }}
         >
-          + 1000
+          + 5000
         </h1>
       </div>
       <div className="flex justify-center items-center align-middle w-full mt-8">
